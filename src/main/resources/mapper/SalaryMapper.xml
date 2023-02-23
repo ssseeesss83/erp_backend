@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.SalarySheetDao">
+
+<select id="getLatestSheet" resultMap="SalarySheetPO">
+    select * from salary_sheet order by id desc limit 0,1 ;
+</select>
+
+<insert id="createSheet">
+    insert into salary_sheet (id,operator,employee_name,employee_account,should_pay,tax,real_pay,pay_method,company_account,state,create_time)
+    values (#{id},#{operator},#{employeeName},#{employeeAccount},#{shouldPay},#{tax},#{realPay},#{payMethod},#{companyAccount},#{state},#{createTime})
+</insert>
+
+<select id="getAllSheet" resultMap="SalarySheetPO">
+    select * from salary_sheet;
+</select>
+
+<select id="getAllSheetByState" resultMap="SalarySheetPO">
+    select * from salary_sheet
+    where state = #{state};
+</select>
+
+<select id="getOneById" resultMap="SalarySheetPO">
+    select * from salary_sheet
+    where id = #{sheetId};
+</select>
+
+<update id="updateSheetState">
+    update salary_sheet
+    set state = #{state}
+    where id = #{sheetId}
+</update>
+
+<update id="updateSheetStateOnPrev">
+    update salary_sheet
+    set state = #{state}
+    where id = #{sheetId} and state = #{prevState}
+</update>
+    <select id="getBusinessProcess" resultType="com.nju.edu.erp.model.po.SalarySheetPO">
+        select * from salary_sheet where state = '审批完成' AND
+        (salary_sheet.create_time>=#{begin} OR #{begin} is null)AND
+        (salary_sheet.create_time&lt;=#{end} OR #{end} is null)AND
+        (salary_sheet.operator=#{operator} OR #{operator} is null);
+    </select>
+
+    <resultMap id="SalarySheetPO" type="com.nju.edu.erp.model.po.SalarySheetPO">
+        <id column="id" property="id"/>
+        <result column="operator" property="operator"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="employee_account" property="employeeAccount"/>
+        <result column="should_pay" property="shouldPay"/>
+        <result column="tax" property="tax"/>
+        <result column="real_pay" property="realPay"/>
+        <result column="pay_method" property="payMethod"/>
+        <result column="company_account" property="companyAccount"/>
+        <result column="state" property="state"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+</mapper>

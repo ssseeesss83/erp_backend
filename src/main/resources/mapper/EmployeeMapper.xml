@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.EmployeeDao">
+
+
+<select id="getAll" resultMap="EmployeePO">
+    select * from employee
+</select>
+
+<select id="getOneById" resultMap="EmployeePO">
+    select * from employee
+    where employee_id = #{employeeId}
+</select>
+
+    <select id="getOneByName" resultMap="EmployeePO">
+        select * from employee
+        where employee_name = #{employeeName}
+    </select>
+
+<select id="getLatest" resultMap="EmployeePO">
+    select * from employee order by employee_id limit 0,1 ;
+</select>
+
+<insert id="create">
+    insert into employee (employee_name,sex,birth,phone,employee_account,station_name,station_level)
+    values (#{employeeName},#{sex},#{birth},#{phone},#{employeeAccount},#{stationName},#{stationLevel})
+</insert>
+
+<delete id="deleteById">
+    delete
+    from employee
+    where employee_id = #{employId}
+</delete>
+
+<update id="update">
+    update employee
+    set employee_name = #{employeeName},sex =#{sex},birth = #{birth},phone = #{phone},employee_account=#{employeeAccount},station_name = #{stationName},station_level = #{stationLevel}
+    where employee_id = #{employeeId}
+</update>
+
+    <resultMap id="EmployeePO" type="com.nju.edu.erp.model.po.EmployeePO">
+        <id column="employee_id" property="employeeId"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="sex" property="sex"/>
+        <result column="birth" property="birth"/>
+        <result column="phone" property="phone"/>
+        <result column="employee_account" property="employeeAccount"/>
+        <result column="station_name" property="stationName"/>
+        <result column="station_level" property="stationLevel"/>
+    </resultMap>
+
+</mapper>

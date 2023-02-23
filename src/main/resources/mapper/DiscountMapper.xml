@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.DiscountDao">
+
+    <insert id="create" parameterType="com.nju.edu.erp.model.po.DiscountPO" useGeneratedKeys="true" keyProperty="id">
+      insert into discount_sheet (discount_id, customer_level, discount, begin, end)
+       values (#{discountId},#{customerLevel},#{discount},#{begin},#{end})
+    </insert>
+
+
+    <select id="getAll" resultMap="DiscountPO">
+        select * from discount_sheet where
+        (begin &lt;=#{date} OR begin is null)AND
+        (end >=#{date} OR end is null);
+    </select>
+
+    <select id="getAvailableByLevel" resultMap="DiscountPO">
+        select * from discount_sheet where
+        customer_level >= #{customerLevel} AND
+        (begin &lt;=#{date} OR begin is null)AND
+        (end >=#{date} OR end is null);
+    </select>
+
+    <delete id="delete">
+        delete from discount_sheet where discount_id = #{discountId}
+    </delete>
+
+    <select id="getLatest" resultMap="DiscountPO">
+        select * from discount_sheet order by discount_id desc limit 0,1 ;
+    </select>
+
+
+    <resultMap id="DiscountPO" type="com.nju.edu.erp.model.po.DiscountPO">
+        <id column="discount_id" property="discountId"/>
+        <result column="customer_level" property="customerLevel"/>
+        <result column="discount" property="discount"/>
+        <result column="begin" property="begin"/>
+        <result column="end" property="end"/>
+    </resultMap>
+
+
+</mapper>

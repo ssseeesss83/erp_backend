@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.GiftSheetDao">
+
+    <insert id="create" parameterType="com.nju.edu.erp.model.po.gift.GiftSheetPO" useGeneratedKeys="true" keyProperty="id">
+      insert into gift_sheet (id, sale_sheet_id, customer_id, operator, create_time, state)
+       values (#{id},#{saleSheetId},#{customerId},#{operator}, #{createTime}, #{state})
+    </insert>
+
+    <insert id="createBatchSheetContent" parameterType="com.nju.edu.erp.model.po.gift.GiftSheetContentPO" useGeneratedKeys="true" keyProperty="id">
+        insert into gift_sheet_content (gift_sheet_id, pid, quantity) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.giftSheetId},#{item.pid},#{item.quantity})
+        </foreach>
+    </insert>
+
+    <select id="getLatest" resultMap="GiftSheetPO">
+        select * from gift_sheet order by id desc limit 0,1 ;
+    </select>
+
+    <select id="getAll" resultMap="GiftSheetPO">
+        select * from gift_sheet;
+    </select>
+
+    <select id="getAllByState" resultMap="GiftSheetPO">
+        select * from gift_sheet where state = #{state.value};
+    </select>
+
+    <select id="getOneById" resultMap="GiftSheetPO">
+        select * from gift_sheet where id = #{id};
+    </select>
+
+    <select id="getOneBySaleSheetId" resultMap="GiftSheetPO">
+        select * from gift_sheet where sale_sheet_id = #{saleSheetId};
+    </select>
+
+
+    <update id="updateState">
+        update gift_sheet
+        set state = #{state.value}
+        where id = #{id}
+    </update>
+
+    <update id="updateStateV2">
+        update gift_sheet
+        set state = #{state.value}
+        where id = #{id} and state = #{preState.value}
+    </update>
+
+    <select id="getBatchSheetContent" resultMap="GiftSheetContentPO">
+        select * from gift_sheet_content where gift_sheet_id = #{giftSheetId};
+    </select>
+
+
+
+    <resultMap id="GiftSheetPO" type="com.nju.edu.erp.model.po.gift.GiftSheetPO">
+        <id column="id" property="id"/>
+        <result column="sale_sheet_id" property="saleSheetId"/>
+        <result column="customer_id" property="customerId"/>
+        <result column="operator" property="operator"/>
+        <result column="create_time" property="createTime"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <resultMap id="GiftSheetContentPO" type="com.nju.edu.erp.model.po.gift.GiftSheetContentPO">
+        <id column="id" property="id"/>
+        <result column="gift_sheet_id" property="giftSheetId"/>
+        <result column="pid" property="pid"/>
+        <result column="quantity" property="quantity"/>
+    </resultMap>
+</mapper>

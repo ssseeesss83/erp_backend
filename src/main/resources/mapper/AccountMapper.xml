@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.AccountDao">
+
+
+<select id="findAll" resultType="com.nju.edu.erp.model.po.AccountPO">
+    select * from account
+</select>
+
+<select id="findById" resultType="com.nju.edu.erp.model.po.AccountPO">
+    select * from account
+    where id = #{id}
+</select>
+
+<select id="findByName" resultType="com.nju.edu.erp.model.po.AccountPO">
+    select * from account
+    where name = #{name}
+</select>
+
+<select id="getLatest" resultType="com.nju.edu.erp.model.po.AccountPO">
+    select * from account order by id limit 0,1 ;
+</select>
+
+<insert id="createAccount">
+    insert into account (name,balance)
+    values (#{name},#{balance})
+</insert>
+
+<delete id="deleteAccount">
+    delete
+    from account
+    where name = #{name}
+</delete>
+
+<update id="updateAccount">
+    update account
+    set balance = #{balance}
+    where name = #{name}
+</update>
+
+<select id="getLatestId" resultType="java.lang.Integer">
+    select id from account order by id limit 0,1 ;
+</select>
+    <resultMap id="AccountPO" type="com.nju.edu.erp.model.po.AccountPO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="balance" property="balance"/>
+    </resultMap>
+
+<delete id="deleteAll">
+    delete from account;
+</delete>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.VoucherDao">
+
+    <insert id="create" parameterType="com.nju.edu.erp.model.po.voucher.VoucherPO" useGeneratedKeys="true" keyProperty="id">
+      insert into voucher_sheet (voucher_id, voucher_name, voucher_type, voucher_amount, customer_level, begin, end, create_time)
+       values (#{voucherId},#{voucherName},#{voucherType.value},#{voucherAmount},#{customerLevel},#{begin},#{end},#{createTime})
+    </insert>
+
+    <insert id="createVoucherLimit" parameterType="com.nju.edu.erp.model.po.voucher.VoucherLimitPO" useGeneratedKeys="true" keyProperty="id">
+        insert into voucher_limit_sheet (voucher_id, pid, quantity) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.voucherId},#{item.pid},#{item.quantity})
+        </foreach>
+    </insert>
+
+    <select id="getAll" resultMap="VoucherPO">
+        select * from voucher_sheet;
+    </select>
+
+    <select id="getAllByType" resultMap="VoucherPO">
+        select * from voucher_sheet where voucher_type = #{voucherType.value} AND
+        (begin &lt;=#{date} OR begin is null)AND
+        (end >=#{date} OR end is null);
+    </select>
+
+    <select id="getAllByTypeAndCustomerLevel" resultMap="VoucherPO">
+        select * from voucher_sheet where voucher_type = #{voucherType.value} and
+        customer_level >= #{customerLevel} AND
+        (begin &lt;=#{date} OR begin is null)AND
+        (end >=#{date} OR end is null);
+    </select>
+
+    <select id="getLimitByVoucherId" resultMap="VoucherLimitPO">
+        select * from voucher_limit_sheet where voucher_id = #{voucherId};
+    </select>
+
+    <delete id="delete">
+        delete from voucher_sheet where voucher_id = #{voucherId}
+    </delete>
+
+    <select id="getLatest" resultMap="VoucherPO">
+        select * from voucher_sheet order by voucher_id desc limit 0,1 ;
+    </select>
+
+
+    <resultMap id="VoucherPO" type="com.nju.edu.erp.model.po.voucher.VoucherPO">
+        <id column="voucher_id" property="voucherId"/>
+        <result column="voucher_name" property="voucherName"/>
+        <result column="voucher_type" property="voucherType"/>
+        <result column="voucher_amount" property="voucherAmount"/>
+        <result column="customer_level" property="customerLevel"/>
+        <result column="begin" property="begin"/>
+        <result column="end" property="end"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="VoucherLimitPO" type="com.nju.edu.erp.model.po.voucher.VoucherLimitPO">
+        <id column="id" property="id"/>
+        <result column="voucher_id" property="voucherId"/>
+        <result column="pid" property="pid"/>
+        <result column="quantity" property="quantity"/>
+    </resultMap>
+
+    <select id="getOneById" resultMap="VoucherPO">
+        select * from voucher_sheet where voucher_id = #{voucherId};
+    </select>
+</mapper>

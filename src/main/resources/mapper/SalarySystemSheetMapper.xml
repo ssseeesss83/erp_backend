@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.SalarySystemSheetDao">
+
+<insert id="create">
+    insert into salary_system_sheet (station_name,station_level,basis_salary,station_salary,calculation_type,pay_method,tax_type,state)
+    values (#{stationName},#{stationLevel},#{basisSalary},#{stationSalary},#{salaryCalculationType.value},#{payMethod},#{taxType.value},#{state})
+</insert>
+
+<update id="updateByNameAndLevel">
+    update salary_system_sheet
+    set basis_salary = #{basisSalary},station_salary = #{stationSalary},calculation_type = #{salaryCalculationType.value},pay_method = #{payMethod},tax_type = #{payMethod},tax_type = #{taxType.value},state=#{state}
+    where station_name = #{stationName} and station_level = #{stationLevel}
+</update>
+
+<update id="updateState">
+    update salary_system_sheet
+    set state = #{state}
+    where station_name = #{stationName} and station_level = #{stationLevel} and state != '审批失败'
+</update>
+
+<update id="updateStateV2">
+    update salary_system_sheet
+    set state = #{state}
+    where station_name = #{stationName} and station_level = #{stationLevel} and state = #{preState} and state != '审批失败'
+</update>
+
+<select id="getLatest" resultMap="SalarySystemSheetPO">
+    select * from salary_system_sheet order by id desc limit 0,1 ;
+</select>
+
+<select id="getAllByState" resultMap="SalarySystemSheetPO">
+    select * from salary_system_sheet where state = #{state};
+</select>
+
+<select id="getOneByNameAndLevel" resultMap="SalarySystemSheetPO">
+    select * from salary_system_sheet where station_name = #{stationName} and station_level = #{stationLevel} and state != '审批失败'
+</select>
+
+<update id="failAllByNameAndLevel">
+    update salary_system_sheet
+    set state = '审批失败'
+    where station_name = #{stationName} and station_level = #{stationLevel}
+</update>
+    <resultMap id="SalarySystemSheetPO" type="com.nju.edu.erp.model.po.SalarySystemSheetPO">
+        <id column="id" property="id"/>
+        <result column="station_name" property="stationName"/>
+        <result column="station_level" property="stationLevel"/>
+        <result column="basis_salary" property="basisSalary"/>
+        <result column="station_salary" property="stationSalary"/>
+        <result column="calculation_type" property="salaryCalculationType"/>
+        <result column="pay_method" property="payMethod"/>
+        <result column="tax_type" property="taxType"/>
+        <result column="state" property="state"/>
+    </resultMap>
+</mapper>

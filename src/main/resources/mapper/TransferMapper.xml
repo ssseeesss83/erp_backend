@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.TransferDao">
+
+    <insert id="create" parameterType="com.nju.edu.erp.model.po.TransferPO" useGeneratedKeys="true" keyProperty="id">
+      insert into transfer_sheet (id, source_account, target_account, amount, state)
+       values (#{id},#{sourceAccount},#{targetAccount},#{amount}, #{state})
+    </insert>
+
+
+    <delete id="deleteById">
+        delete from transfer_sheet where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.nju.edu.erp.model.po.TransferPO">
+        update transfer_sheet
+        <set>
+            <if test = "sourceAccount != null">`source_account` = #{sourceAccount}, </if>
+            <if test = "targetAccount != null">`target_account` = #{targetAccount}, </if>
+            <if test = "amount != null">`amount` = #{amount}, </if>
+            <if test = "state != null">`state` = #{state.value}, </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getLatest" resultMap="TransferPO">
+        select * from transfer_sheet order by id desc limit 0,1 ;
+    </select>
+
+    <select id="getById" resultMap="TransferPO">
+        select * from transfer_sheet where id = #{id};
+    </select>
+
+    <select id="getAllByState" resultMap="TransferPO">
+        select * from transfer_sheet where state = #{state.value};
+    </select>
+
+    <select id="getAll" resultMap="TransferPO">
+        select * from transfer_sheet;
+    </select>
+
+
+
+    <resultMap id="TransferPO" type="com.nju.edu.erp.model.po.TransferPO">
+        <id column="id" property="id"/>
+        <result column="source_account" property="sourceAccount"/>
+        <result column="target_account" property="targetAccount"/>
+        <result column="amount" property="amount"/>
+        <result column="state" property="state"/>
+    </resultMap>
+</mapper>

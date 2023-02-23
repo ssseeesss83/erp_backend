@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.PayableSheetDao">
+
+    <select id="getLatestSheet" resultType="com.nju.edu.erp.model.po.payable.PayableSheetPO">
+        select * from payable_sheet order by id desc limit 0,1 ;
+    </select>
+
+    <insert id="saveSheet">
+        insert into payable_sheet (id,customer,operator,state,total_amount,create_time)
+        values (#{id},#{customer},#{operator},#{state},#{totalAmount},#{createTime})
+    </insert>
+
+    <insert id="saveBatchSheetContent" useGeneratedKeys="true" keyProperty="id">
+        insert into payable_sheet_content (payable_sheet_id,name,transfer_amount, remark) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.payableSheetId},#{item.name},#{item.transferAmount},#{item.remark})
+        </foreach>
+    </insert>
+
+    <select id="findAllSheet" resultType="com.nju.edu.erp.model.po.payable.PayableSheetPO">
+        select * from payable_sheet;
+    </select>
+
+    <select id="findAllSheetByState" resultType="com.nju.edu.erp.model.po.payable.PayableSheetPO">
+        select * from payable_sheet
+        where state = #{state};
+    </select>
+
+    <select id="findSheetById" resultType="com.nju.edu.erp.model.po.payable.PayableSheetPO">
+        select * from payable_sheet
+        where id = #{SheetId};
+    </select>
+
+    <select id="findContentBySheetId" resultType="com.nju.edu.erp.model.po.payable.PayableSheetContentPO">
+        select * from payable_sheet_content
+        where payable_sheet_id = #{sheetId};
+    </select>
+
+    <update id="updateSheetState">
+        update payable_sheet
+        set state = #{state}
+        where id = #{sheetId}
+    </update>
+
+    <update id="updateSheetStateOnPrev">
+        update payable_sheet
+        set state = #{state}
+        where id = #{sheetId} and state = #{prev}
+    </update>
+
+    <select id="getBusinessProcess" resultType="com.nju.edu.erp.model.po.payable.PayableSheetPO">
+        select * from payable_sheet where state = '审批完成' AND
+        (payable_sheet.create_time>=#{begin} OR #{begin} is null)AND
+        (payable_sheet.create_time&lt;=#{end} OR #{end} is null)AND
+        (payable_sheet.customer=#{customerId} OR #{customerId} is null)AND
+        (payable_sheet.operator=#{operator} OR #{operator} is null);
+    </select>
+
+    <resultMap id="payable_sheet" type="com.nju.edu.erp.model.po.payable.PayableSheetPO">
+        <id column="id" property="id"/>
+        <result column="customer" property="customer"/>
+        <result column="operator" property="operator"/>
+        <result column="state" property="state"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="payable_sheet_content" type="com.nju.edu.erp.model.po.payable.PayableSheetContentPO">
+        <id column="id" property="id"/>
+        <result column="payable_sheet_id" property="payableSheetId"/>
+        <result column="name" property="name"/>
+        <result column="transfer_amount" property="transferAmount"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="getOneById" resultMap="payable_sheet">
+        select * from payable_sheet where id = #{id};
+    </select>
+</mapper>

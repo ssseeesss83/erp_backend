@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.AnnualBonusDao">
+
+
+<select id="getAll" resultType="com.nju.edu.erp.model.po.AnnualBonusPO">
+    select * from annual_bonus
+</select>
+
+<select id="getOneByEmployeeNameAndYear" resultType="com.nju.edu.erp.model.po.AnnualBonusPO">
+    select * from annual_bonus
+    where employee_name = #{employeeName} and year = #{year}
+</select>
+
+<insert id="create">
+    insert into annual_bonus (employee_name,basis_salary_amount,year)
+    values (#{employeeName},#{basisSalaryAmount},#{year})
+</insert>
+
+<delete id="delete">
+    delete
+    from annual_bonus
+    where employee_name = #{employeeName}
+</delete>
+
+</mapper>

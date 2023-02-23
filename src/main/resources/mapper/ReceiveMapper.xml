@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.ReceiveSheetDao">
+
+<select id="getLatestSheet" resultType="com.nju.edu.erp.model.po.receive.ReceiveSheetPO">
+    select * from receive_sheet order by id desc limit 0,1 ;
+</select>
+
+<insert id="saveSheet">
+    insert into receive_sheet (id,customer,operator,state,total_amount,create_time)
+    values (#{id},#{customer},#{operator},#{state},#{totalAmount},#{createTime})
+</insert>
+
+<insert id="saveBatchSheetContent" useGeneratedKeys="true" keyProperty="id">
+    insert into receive_sheet_content (receive_sheet_id,name,transfer_amount, remark) values
+    <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.receiveSheetId},#{item.name},#{item.transferAmount},#{item.remark})
+    </foreach>
+</insert>
+
+<select id="findAllSheet" resultType="com.nju.edu.erp.model.po.receive.ReceiveSheetPO">
+    select * from receive_sheet;
+</select>
+
+<select id="findAllSheetByState" resultType="com.nju.edu.erp.model.po.receive.ReceiveSheetPO">
+    select * from receive_sheet
+    where state = #{state};
+</select>
+
+<select id="findSheetById" resultType="com.nju.edu.erp.model.po.receive.ReceiveSheetPO">
+    select * from receive_sheet
+    where id = #{SheetId};
+</select>
+
+<select id="findContentBySheetId" resultType="com.nju.edu.erp.model.po.receive.ReceiveSheetContentPO">
+    select * from receive_sheet_content
+    where receive_sheet_id = #{sheetId};
+</select>
+
+<update id="updateSheetState">
+    update receive_sheet
+    set state = #{state}
+    where id = #{sheetId}
+</update>
+
+<update id="updateSheetStateOnPrev">
+    update receive_sheet
+    set state = #{state}
+    where id = #{sheetId} and state = #{prev}
+</update>
+
+    <select id="getBusinessProcess" resultType="com.nju.edu.erp.model.po.receive.ReceiveSheetPO">
+        select * from receive_sheet where state = '审批完成' AND
+        (receive_sheet.create_time>=#{begin} OR #{begin} is null)AND
+        (receive_sheet.create_time&lt;=#{end} OR #{end} is null)AND
+        (receive_sheet.customer=#{customerId} OR #{customerId} is null)AND
+        (receive_sheet.operator=#{operator} OR #{operator} is null);
+    </select>
+    <resultMap id="receive_sheet" type="com.nju.edu.erp.model.po.receive.ReceiveSheetPO">
+        <id column="id" property="id"/>
+        <result column="customer" property="customer"/>
+        <result column="operator" property="operator"/>
+        <result column="state" property="state"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="receive_sheet_content" type="com.nju.edu.erp.model.po.receive.ReceiveSheetContentPO">
+        <id column="id" property="id"/>
+        <result column="receive_sheet_id" property="receiveSheetId"/>
+        <result column="name" property="name"/>
+        <result column="transfer_amount" property="transferAmount"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.ProductDao">
+    <update id="updateById" parameterType="com.nju.edu.erp.model.po.ProductPO">
+        update product
+        <set>
+            <if test="name != null">`name` = #{name}, </if>
+            <if test="type != null">`type` = #{type}, </if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="purchasePrice != null">purchase_price = #{purchasePrice},</if>
+            <if test="retailPrice != null">retail_price = #{retailPrice},</if>
+            <if test="recentPp != null">recent_pp = #{recentPp},</if>
+            <if test="recentRp != null">recent_rp = #{recentRp},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id = "createProduct" parameterType="com.nju.edu.erp.model.po.ProductPO">
+        insert into product (id, `name`, category_id, `type`, quantity, purchase_price, retail_price)
+        values (#{id}, #{name}, #{categoryId}, #{type}, #{quantity}, #{purchasePrice}, #{retailPrice})
+    </insert>
+
+    <select id = "findById" resultMap="ProductPO">
+        select * from product where id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="ProductPO">
+        select * from product
+    </select>
+
+    <delete id="deleteById">
+        delete from product where id = #{id}
+    </delete>
+
+    <resultMap id="ProductPO" type="com.nju.edu.erp.model.po.ProductPO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="type" property="type"/>
+        <result column="quantity" property="quantity"/>
+        <result column="purchase_price" property="purchasePrice"/>
+        <result column="retail_price" property="retailPrice"/>
+        <result column="recent_pp" property="recentPp"/>
+        <result column="recent_rp" property="recentRp"/>
+    </resultMap>
+
+    <delete id="deleteAll">
+        delete from product;
+    </delete>
+</mapper>
